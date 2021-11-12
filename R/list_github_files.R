@@ -20,8 +20,6 @@ list_github_files <- function(repo, dir = NULL, pattern = NULL, org = "curso-r")
     )
   )
 
-  httr::stop_for_status(req)
-
   arquivos <- unlist(
     lapply(httr::content(req)$tree, "[", "path"),
     use.names = FALSE
@@ -35,6 +33,5 @@ list_github_files <- function(repo, dir = NULL, pattern = NULL, org = "curso-r")
     arquivos <- arquivos[grep(pattern, arquivos)]
   }
 
-  return(arquivos)
+  arquivos
 }
-
