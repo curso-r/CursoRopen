@@ -4,7 +4,13 @@
 \alias{list_github_files}
 \title{listar arquivos em um repositorio no github}
 \usage{
-list_github_files(repo, dir = NULL, pattern = NULL, org = "curso-r")
+list_github_files(
+  repo,
+  dir = NULL,
+  pattern = NULL,
+  org = "curso-r",
+  pat = FALSE
+)
 }
 \arguments{
 \item{repo}{nome do repositorio}
@@ -14,6 +20,9 @@ list_github_files(repo, dir = NULL, pattern = NULL, org = "curso-r")
 \item{pattern}{padrao para buscar arquivos}
 
 \item{org}{organizacao no GitHub. Por padrao eh a curso-r.}
+
+\item{pat}{adicionar github pat como header da requisicao. Isso reduz
+as chances da requisicao vir vazia. Por padrao \code{FALSE}.}
 }
 \value{
 um vetor
