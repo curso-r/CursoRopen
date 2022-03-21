@@ -2,22 +2,20 @@
 % Please edit documentation in R/change-rmd-yaml.R
 \name{change_rmd_yaml}
 \alias{change_rmd_yaml}
-\title{Funcao para alterar o YAML de um rmd}
+\title{Update YAML front matter of a RMarkdown file}
 \usage{
 change_rmd_yaml(input_file, ..., output_file)
 }
 \arguments{
-\item{input_file}{arquivo de entrada}
+\item{input_file}{Path to file.}
 
-\item{...}{o que queremos alterar.}
+\item{...}{Name-value pairs to update in front matter.}
 
-\item{output_file}{arquivo de saida. opcional. se não informar,
-ele mostra o resultado no console}
+\item{output_file}{Path to output file. If missing, prints output to console.}
 }
 \value{
-o conteúdo do arquivo alterado
+A string vector with the updated content.
 }
 \description{
-Funcao por r2evans, postado no stackoverflow (thanks!)
-https://stackoverflow.com/questions/62095329/how-to-edit-an-r-markdown-yaml-header-programmatically
+Update YAML front matter of a RMarkdown file
 }

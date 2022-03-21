@@ -1,14 +1,11 @@
-#' Funcao para alterar o YAML de um rmd
+#' Update YAML front matter of a RMarkdown file
 #'
-#' Funcao por r2evans, postado no stackoverflow (thanks!)
-#' https://stackoverflow.com/questions/62095329/how-to-edit-an-r-markdown-yaml-header-programmatically
+#' @param input_file Path to file.
+#' @param ... Name-value pairs to update in front matter.
+#' @param output_file Path to output file. If missing, prints output to console.
 #'
-#' @param input_file arquivo de entrada
-#' @param ... o que queremos alterar.
-#' @param output_file arquivo de saida. opcional. se não informar,
-#' ele mostra o resultado no console
+#' @return A string vector with the updated content.
 #'
-#' @return o conteúdo do arquivo alterado
 #' @export
 change_rmd_yaml <- function(input_file, ..., output_file) {
   input_lines <- readLines(input_file)
