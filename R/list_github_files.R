@@ -1,53 +1,38 @@
 #' List files in a GitHub repository
 #'
-#' @param repo Repository name.
-#' @param dir Folder name.
-#' @param pattern Regex pattern to look for.
-#' @param org GitHub organization (default is `curso-r`).
-#' @param pat Add PAT as request header. This reduces the chances of getting an
-#'   empty response.
+#' @param repo Repository name (excluding owner).
+#' @param path Subdirectory inside repo.
+#' @param regexp A regular expression passed on to [grep()] to filter paths.
+#' @param owner GitHub organization (default is `curso-r`).
 #'
-#' @return A string vector.
+#' @return A string vector of paths.
 #' @examples list_github_files("main-web-scraping", "slides/", "[0-9]-.*html$")
 #'
 #' @export
-list_github_files <- function(repo, dir = NULL, pattern = NULL, org = "curso-r", pat = FALSE) {
+list_github_files <- function(repo, path = NULL, regexp = NULL,
+                              owner = "curso-r") {
 
-  if (pat) {
-    usethis::ui_info("Tentando pegar seu pat com gitcreds::gitcreds_get()...")
-    my_pat <- gitcreds::gitcreds_get()$password
-    if (is.null(my_pat)) {
-      usethis::ui_oops("Não consegui :(")
-      usethis::ui_info("Tentando pegar seu pat Sys.getenv('GITHUB_PAT')")
-      my_pat <- Sys.getenv('GITHUB_PAT')
-      if (my_pat == "") usethis::ui_stop("Não consegui encontrar seu PAT.")
-    }
-    hh <- httr::add_headers(authorization = paste("Bearer", my_pat))
-  } else {
-    hh <- httr::add_headers()
-  }
+  # Get default branch
+  branch <- gh::gh(
+    "/repos/{owner}/{repo}",
+    owner = owner, repo = repo
+  )$default_branch
 
-  req <- httr::GET(
-    paste0(
-      "https://api.github.com/repos/",  org, "/",
-      repo,
-      "/git/trees/master?recursive=1"
-    ),
-    hh
-  )
+  # Get file tree
+  tree <- gh::gh(
+    "/repos/{owner}/{repo}/git/trees/{branch}",
+    owner = owner, repo = repo, branch = branch,
+    recursive = 1
+  )$tree
 
-  arquivos <- unlist(
-    lapply(httr::content(req)$tree, "[", "path"),
-    use.names = FALSE
-  )
+  # Replace NULLs
+  if (is.null(path)) path <- ""
+  if (is.null(regexp)) regexp <- ""
 
-  if (!is.null(dir)) {
-    arquivos <- grep(dir, arquivos, value = TRUE, fixed = TRUE)
-  }
+  # Filter tree given path and regexp
+  tree <- Filter(function(x) substr(x$path, 1, nchar(path)) == path, tree)
+  tree <- Filter(function(x) grepl(regexp, x$path), tree)
 
-  if (!is.null(pattern)) {
-    arquivos <- arquivos[grep(pattern, arquivos)]
-  }
-
-  arquivos
+  # Return paths
+  sapply(tree, function(x) x$path)
 }

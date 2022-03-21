@@ -4,28 +4,19 @@
 \alias{list_github_files}
 \title{List files in a GitHub repository}
 \usage{
-list_github_files(
-  repo,
-  dir = NULL,
-  pattern = NULL,
-  org = "curso-r",
-  pat = FALSE
-)
+list_github_files(repo, path = NULL, regexp = NULL, owner = "curso-r")
 }
 \arguments{
-\item{repo}{Repository name.}
+\item{repo}{Repository name (excluding owner).}
 
-\item{dir}{Folder name.}
+\item{path}{Subdirectory inside repo.}
 
-\item{pattern}{Regex pattern to look for.}
+\item{regexp}{A regular expression passed on to \code{\link[=grep]{grep()}} to filter paths.}
 
-\item{org}{GitHub organization (default is \code{curso-r}).}
-
-\item{pat}{Add PAT as request header. This reduces the chances of getting an
-empty response.}
+\item{owner}{GitHub organization (default is \code{curso-r}).}
 }
 \value{
-A string vector.
+A string vector of paths.
 }
 \description{
 List files in a GitHub repository
