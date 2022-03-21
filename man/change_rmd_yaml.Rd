@@ -4,14 +4,14 @@
 \alias{change_rmd_yaml}
 \title{Update YAML front matter of a RMarkdown file}
 \usage{
-change_rmd_yaml(input_file, ..., output_file)
+change_rmd_yaml(path, ..., new_path = NULL)
 }
 \arguments{
-\item{input_file}{Path to file.}
+\item{path}{Path to file.}
 
 \item{...}{Name-value pairs to update in front matter.}
 
-\item{output_file}{Path to output file. If missing, prints output to console.}
+\item{new_path}{Path to output file. If \code{NULL}, prints output to console.}
 }
 \value{
 A string vector with the updated content.
