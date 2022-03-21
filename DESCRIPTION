@@ -1,7 +1,7 @@
 Package: CursoRopen
 Title: Utility functions for Curso-R
-Version: 0.0.0.9000
-Authors@R:c(
+Version: 0.0.0.9001
+Authors@R: c(
     person("Beatriz", "Milz", , "beatriz.milz@usp.br", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-3064-4486")),
     person("Caio", "Lente", , "clente@curso-r.com", role = "aut",
