@@ -1,17 +1,16 @@
-#' listar arquivos em um repositorio no github
+#' List files in a GitHub repository
 #'
-#' @param repo  nome do repositorio
-#' @param dir nome do diretorio
-#' @param pattern padrao para buscar arquivos
-#' @param org organizacao no GitHub. Por padrao eh a curso-r.
-#' @param pat adicionar github pat como header da requisicao. Isso reduz
-#'   as chances da requisicao vir vazia. Por padrao `FALSE`.
+#' @param repo Repository name.
+#' @param dir Folder name.
+#' @param pattern Regex pattern to look for.
+#' @param org GitHub organization (default is `curso-r`).
+#' @param pat Add PAT as request header. This reduces the chances of getting an
+#'   empty response.
 #'
-#' @return um vetor
+#' @return A string vector.
+#' @examples list_github_files("main-web-scraping", "slides/", "[0-9]-.*html$")
+#'
 #' @export
-#'
-#' @examples list_github_files(repo = "main-web-scraping", dir = "slides/", pattern = "[0-9]-.*html$")
-
 list_github_files <- function(repo, dir = NULL, pattern = NULL, org = "curso-r", pat = FALSE) {
 
   if (pat) {

@@ -2,7 +2,7 @@
 % Please edit documentation in R/list_github_files.R
 \name{list_github_files}
 \alias{list_github_files}
-\title{listar arquivos em um repositorio no github}
+\title{List files in a GitHub repository}
 \usage{
 list_github_files(
   repo,
@@ -13,23 +13,24 @@ list_github_files(
 )
 }
 \arguments{
-\item{repo}{nome do repositorio}
+\item{repo}{Repository name.}
 
-\item{dir}{nome do diretorio}
+\item{dir}{Folder name.}
 
-\item{pattern}{padrao para buscar arquivos}
+\item{pattern}{Regex pattern to look for.}
 
-\item{org}{organizacao no GitHub. Por padrao eh a curso-r.}
+\item{org}{GitHub organization (default is \code{curso-r}).}
 
-\item{pat}{adicionar github pat como header da requisicao. Isso reduz
-as chances da requisicao vir vazia. Por padrao \code{FALSE}.}
+\item{pat}{Add PAT as request header. This reduces the chances of getting an
+empty response.}
 }
 \value{
-um vetor
+A string vector.
 }
 \description{
-listar arquivos em um repositorio no github
+List files in a GitHub repository
 }
 \examples{
-list_github_files(repo = "main-web-scraping", dir = "slides/", pattern = "[0-9]-.*html$")
+list_github_files("main-web-scraping", "slides/", "[0-9]-.*html$")
+
 }
