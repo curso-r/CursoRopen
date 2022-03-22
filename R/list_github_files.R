@@ -13,17 +13,10 @@ list_github_files <- function(repo, path = NULL, regexp = NULL,
                               owner = "curso-r") {
 
   # Get default branch
-  branch <- gh::gh(
-    "/repos/{owner}/{repo}",
-    owner = owner, repo = repo
-  )$default_branch
+  branch <- get_default_branch(repo, owner)
 
   # Get file tree
-  tree <- gh::gh(
-    "/repos/{owner}/{repo}/git/trees/{branch}",
-    owner = owner, repo = repo, branch = branch,
-    recursive = 1
-  )$tree
+  tree <- get_file_tree(repo, branch, owner)
 
   # Replace NULLs
   if (is.null(path)) path <- ""
@@ -35,4 +28,33 @@ list_github_files <- function(repo, path = NULL, regexp = NULL,
 
   # Return paths
   sapply(tree, function(x) x$path)
+}
+
+#' Get default branch of a GitHub repository
+#'
+#' @param repo Repository name (excluding owner).
+#' @param owner GitHub organization (default is `curso-r`).
+#'
+#' @return A string.
+#' @examples get_default_branch("main-web-scraping")
+#'
+#' @export
+get_default_branch <- function(repo, owner = "curso-r") {
+  gh::gh("/repos/{owner}/{repo}", owner = owner, repo = repo)$default_branch
+}
+
+#' Get file tree of a GitHub repository
+#'
+#' @param repo Repository name (excluding owner).
+#' @param branch Branch to retrieve (defaults to `main`).
+#' @param owner GitHub organization (default is `curso-r`).
+#'
+#' @return A list of git files.
+#' @noRd
+get_file_tree <- function(repo, branch = "main", owner = "curso-r") {
+  gh::gh(
+    "/repos/{owner}/{repo}/git/trees/{branch}",
+    owner = owner, repo = repo, branch = branch,
+    recursive = 1
+  )$tree
 }
