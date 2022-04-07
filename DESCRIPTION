@@ -6,6 +6,8 @@ Authors@R: c(
            comment = c(ORCID = "0000-0002-3064-4486")),
     person("Caio", "Lente", , "clente@curso-r.com", role = "aut",
            comment = c(ORCID = "0000-0001-8473-069X")),
+    person("Julio", "Trecenti", , "jtrecenti@curso-r.com", role = "aut",
+           comment = c(ORCID = "0000-0002-1680-6389")),           
     person("Curso-R", role = c("cph", "fnd"))
   )
 Description: Simplify Curso-R's GitHub workflows.
