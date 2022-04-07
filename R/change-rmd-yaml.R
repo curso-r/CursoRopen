@@ -1,46 +1,36 @@
-#' Funcao para alterar o YAML de um rmd
+#' Update YAML front matter of a RMarkdown file
 #'
-#' Funcao por r2evans, postado no stackoverflow (thanks!)
-#' https://stackoverflow.com/questions/62095329/how-to-edit-an-r-markdown-yaml-header-programmatically
+#' @param path Path to file.
+#' @param ... Name-value pairs to update in front matter.
+#' @param new_path Path to output file. If `NULL`, prints output to console.
 #'
-#' @param input_file arquivo de entrada
-#' @param ... o que queremos alterar.
-#' @param output_file arquivo de saida. opcional. se não informar,
-#' ele mostra o resultado no console
+#' @return A string vector with the updated content.
 #'
-#' @return o conteúdo do arquivo alterado
 #' @export
-change_rmd_yaml <- function(input_file, ..., output_file) {
-  input_lines <- readLines(input_file)
-  delimiters <- grep("^---\\s*$", input_lines)
-  if (!length(delimiters)) {
-    stop("unable to find yaml delimiters")
-  } else if (length(delimiters) == 1L) {
-    if (delimiters[1] == 1L) {
-      stop("cannot find second delimiter, first is on line 1")
-    } else {
-      # found just one set, assume it is *closing* the yaml matter;
-      # fake a preceding line of delimiter
-      delimiters <- c(0L, delimiters[1])
-    }
-  }
-  delimiters <- delimiters[1:2]
-  yaml_list <-
-    yaml::yaml.load(input_lines[(delimiters[1] + 1):(delimiters[2] - 1)])
+change_rmd_yaml <- function(path, ..., new_path = NULL) {
 
+  # Read file
+  lines <- readLines(path)
+
+  # Find dashes
+  dashes <- grep("^---\\s*$", lines)
+  stopifnot(length(dashes) == 2)
+
+  # Read front matter as YAML
+  yaml <- yaml::yaml.load(lines[(dashes[1] + 1):(dashes[2] - 1)])
+
+  # Append name-value pairs to the end of front matter
   dots <- list(...)
-  yaml_list <-
-    c(yaml_list[setdiff(names(yaml_list), names(dots))], dots)
+  yaml <- yaml::as.yaml(c(yaml[setdiff(names(yaml), names(dots))], dots))
 
-  output_lines <- c(if (delimiters[1] > 0)
-    input_lines[1:(delimiters[1])],
-    strsplit(yaml::as.yaml(yaml_list), "\n")[[1]],
-    input_lines[-(1:(delimiters[2] - 1))])
+  # Reform file
+  out <- c("---", strsplit(yaml, "\n")[[1]], lines[-seq_len(dashes[2] - 1)])
 
-  if (missing(output_file)) {
-    return(output_lines)
-  } else {
-    writeLines(output_lines, con = output_file)
-    return(invisible(output_lines))
+  # Print contents (if requested)
+  if (is.null(new_path)) {
+    return(out)
   }
+
+  # Write to new file
+  writeLines(out, new_path)
 }

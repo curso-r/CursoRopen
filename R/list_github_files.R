@@ -1,54 +1,60 @@
-#' listar arquivos em um repositorio no github
+#' List files in a GitHub repository
 #'
-#' @param repo  nome do repositorio
-#' @param dir nome do diretorio
-#' @param pattern padrao para buscar arquivos
-#' @param org organizacao no GitHub. Por padrao eh a curso-r.
-#' @param pat adicionar github pat como header da requisicao. Isso reduz
-#'   as chances da requisicao vir vazia. Por padrao `FALSE`.
+#' @param repo Repository name (excluding owner).
+#' @param path Subdirectory inside repo.
+#' @param regexp A regular expression passed on to [grep()] to filter paths.
+#' @param owner GitHub organization (default is `curso-r`).
 #'
-#' @return um vetor
+#' @return A string vector of paths.
+#' @examples list_github_files("main-web-scraping", "slides/", "[0-9]-.*html$")
+#'
 #' @export
+list_github_files <- function(repo, path = NULL, regexp = NULL,
+                              owner = "curso-r") {
+
+  # Get default branch
+  branch <- get_default_branch(repo, owner)
+
+  # Get file tree
+  tree <- get_file_tree(repo, branch, owner)
+
+  # Replace NULLs
+  if (is.null(path)) path <- ""
+  if (is.null(regexp)) regexp <- ""
+
+  # Filter tree given path and regexp
+  tree <- Filter(function(x) substr(x$path, 1, nchar(path)) == path, tree)
+  tree <- Filter(function(x) grepl(regexp, x$path), tree)
+
+  # Return paths
+  sapply(tree, function(x) x$path)
+}
+
+#' Get default branch of a GitHub repository
 #'
-#' @examples list_github_files(repo = "main-web-scraping", dir = "slides/", pattern = "[0-9]-.*html$")
+#' @param repo Repository name (excluding owner).
+#' @param owner GitHub organization (default is `curso-r`).
+#'
+#' @return A string.
+#' @examples get_default_branch("main-web-scraping")
+#'
+#' @export
+get_default_branch <- function(repo, owner = "curso-r") {
+  gh::gh("/repos/{owner}/{repo}", owner = owner, repo = repo)$default_branch
+}
 
-list_github_files <- function(repo, dir = NULL, pattern = NULL, org = "curso-r", pat = FALSE) {
-
-  if (pat) {
-    usethis::ui_info("Tentando pegar seu pat com gitcreds::gitcreds_get()...")
-    my_pat <- gitcreds::gitcreds_get()$password
-    if (is.null(my_pat)) {
-      usethis::ui_oops("Não consegui :(")
-      usethis::ui_info("Tentando pegar seu pat Sys.getenv('GITHUB_PAT')")
-      my_pat <- Sys.getenv('GITHUB_PAT')
-      if (my_pat == "") usethis::ui_stop("Não consegui encontrar seu PAT.")
-    }
-    hh <- httr::add_headers(authorization = paste("Bearer", my_pat))
-  } else {
-    hh <- httr::add_headers()
-  }
-
-  req <- httr::GET(
-    paste0(
-      "https://api.github.com/repos/",  org, "/",
-      repo,
-      "/git/trees/master?recursive=1"
-    ),
-    hh
-  )
-
-  arquivos <- unlist(
-    lapply(httr::content(req)$tree, "[", "path"),
-    use.names = FALSE
-  )
-
-  if (!is.null(dir)) {
-    arquivos <- grep(dir, arquivos, value = TRUE, fixed = TRUE)
-  }
-
-  if (!is.null(pattern)) {
-    arquivos <- arquivos[grep(pattern, arquivos)]
-  }
-
-  arquivos
+#' Get file tree of a GitHub repository
+#'
+#' @param repo Repository name (excluding owner).
+#' @param branch Branch to retrieve (defaults to `main`).
+#' @param owner GitHub organization (default is `curso-r`).
+#'
+#' @return A list of git files.
+#' @noRd
+get_file_tree <- function(repo, branch = "main", owner = "curso-r") {
+  gh::gh(
+    "/repos/{owner}/{repo}/git/trees/{branch}",
+    owner = owner, repo = repo, branch = branch,
+    recursive = 1
+  )$tree
 }

@@ -2,34 +2,26 @@
 % Please edit documentation in R/list_github_files.R
 \name{list_github_files}
 \alias{list_github_files}
-\title{listar arquivos em um repositorio no github}
+\title{List files in a GitHub repository}
 \usage{
-list_github_files(
-  repo,
-  dir = NULL,
-  pattern = NULL,
-  org = "curso-r",
-  pat = FALSE
-)
+list_github_files(repo, path = NULL, regexp = NULL, owner = "curso-r")
 }
 \arguments{
-\item{repo}{nome do repositorio}
+\item{repo}{Repository name (excluding owner).}
 
-\item{dir}{nome do diretorio}
+\item{path}{Subdirectory inside repo.}
 
-\item{pattern}{padrao para buscar arquivos}
+\item{regexp}{A regular expression passed on to \code{\link[=grep]{grep()}} to filter paths.}
 
-\item{org}{organizacao no GitHub. Por padrao eh a curso-r.}
-
-\item{pat}{adicionar github pat como header da requisicao. Isso reduz
-as chances da requisicao vir vazia. Por padrao \code{FALSE}.}
+\item{owner}{GitHub organization (default is \code{curso-r}).}
 }
 \value{
-um vetor
+A string vector of paths.
 }
 \description{
-listar arquivos em um repositorio no github
+List files in a GitHub repository
 }
 \examples{
-list_github_files(repo = "main-web-scraping", dir = "slides/", pattern = "[0-9]-.*html$")
+list_github_files("main-web-scraping", "slides/", "[0-9]-.*html$")
+
 }
